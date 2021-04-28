@@ -1,0 +1,146 @@
+3- https://www.postgresqltutorial.com/postgresql-sample-database/ adresine gidin ve ER modeli inceleyin. 
+Tablolar arasindaki en az 5 iliskiyi yazin.(Hangi tablolar arasinda ne tur bir iliski var)
+
+category-film_category one to many
+film_category-film one to many
+category-film many to many
+film actor-actor one to one
+country-city one to many
+
+4- ER modeldeki tablolardan 3 tanesini M olusturun.
+
+5- ER modeldeki tablolardan 3 tanesini K olusturun.
+
+create table categori
+(
+film_id integer primary key not null,
+	category_id integer not null,
+	last_update timestamp without time zone not null
+)
+
+8- Olusturdugunuz 3 tabloya K ile 5 veri girisi yapin.
+
+insert into category (category_id,name,last_update) values (1,'Action','2021-04-24 01:30:30')
+insert into category (category_id,name,last_update) values (2,'Comedy','2021-04-24 01:30:30')
+insert into category (category_id,name,last_update) values (3,'Family','2021-04-24 01:30:30')
+insert into category (category_id,name,last_update) values (4,'Horror','2021-04-24 01:30:30')
+insert into category (category_id,name,last_update) values (5,'Sci-Fi','2021-04-24 01:30:30')
+insert into category (category_id,name,last_update) values (6,'Sports','2021-04-24 01:30:30')
+
+insert into film_category (film_id,category_id,last_update) values (1,1,'2021-04-24 01:30:30')
+insert into film_category (film_id,category_id,last_update) values (2,1,'2021-04-24 01:30:30')
+insert into film_category (film_id,category_id,last_update) values (3,1,'2021-04-24 01:30:30')
+insert into film_category (film_id,category_id,last_update) values (4,2,'2021-04-24 01:30:30')
+insert into film_category (film_id,category_id,last_update) values (5,3,'2021-04-24 01:30:30')
+insert into film_category (film_id,category_id,last_update) values (6,4,'2021-04-24 01:30:30')
+insert into film_category (film_id,category_id,last_update) values (7,4,'2021-04-24 01:30:30')
+insert into film_category (film_id,category_id,last_update) values (8,5,'2021-04-24 01:30:30')
+insert into film_category (film_id,category_id,last_update) values (9,6,'2021-04-24 01:30:30')
+insert into film_category (film_id,category_id,last_update) values (10,6,'2021-04-24 01:30:30')
+
+insert into film (film_id,title,length,release_year,language_id,last_update) values (1,'Agent Truman',169,2006,1,'2021-04-24 01:30:30'
+insert into film (film_id,title,length,release_year,language_id,last_update) values (2,'Alabama Devil',114,2006,1,'2021-04-24 01:30:30'
+insert into film (film_id,title,length,release_year,language_id,last_update) values (3,'Connecticut Tramp',172,2006,1,'2021-04-24 01:30:30')
+insert into film (film_id,title,length,release_year,language_id,last_update) values (4,'Eyes Driving',172,2006,1,'2021-04-24 01:30:30')
+insert into film (film_id,title,length,release_year,language_id,last_update) values (5,'Rage Games',120,2006,1,'2021-04-24 01:30:30')
+
+11- 3 tablodaki birer veriyi K ile degistirin.
+
+update category set name='New' where category_id=6
+
+17- 1 tabloyu K ile silin.
+
+drop table film
+
+19- Kalan tablolardan 1 tanesinin 2 veya 3 sutununu K ile baska bir tablo olarak olusturun.
+
+select film_category.film_id,category.name from film_category 
+inner join category on category.category_id=film_category.category_id
+
+22- Tablolardan 1 tanesini K ile truncate edin.
+truncate table film_category
+
+25- 2 tabloyu K ile silin.
+
+drop table film_category
+drop table category
+
+32- DB nizde 15 adet tablo olmasi lazim. 
+
+Her tabloyu teker teker goruntuleyin ve kolon isimlerine bakarak, 5 tabloda hangi kolonun PK ve FK oldugunu yazin.
+actor		actor_id	pk
+addres		addres_id	pk	city_id		fk
+category	category_id	pk
+city		city_id		pk	country_id	fk
+country		country_id	pk
+customer	customer_id	pk	addres_id	fk
+film		film_id		pk	category_id	fk
+film_actor	actor_id	pk,fk	film_id		pk,fk
+film_category	film_id		pk,fk	category_id	pk,fk
+inventory	inventory_id	pk	film_id		fk
+language	language_id	pk
+payment		payment_id	pk	customer_id	fk	staff_id	fk	rental_id	fk
+rental		rental_id	pk	inventory_id	fk	customer_id	fk	staff_id	fk
+staff		staff_id	pk	addres_id	fk
+store		store_id	pk	manager_staff_id	fk	address_id	fk
+
+33- Action filmlerinin ortalama suresi ne kadar?
+
+select category.name, avg(film.length)
+from film,category
+where category.name ='Action'
+group by category.name
+
+34- En cok staff olan store hangisidir?
+
+select store_id,count(staff_id) from staff
+group by store_id order by count desc limit 1
+
+35- 'Gene Willis' adli actorun oynadigi filmlerin ratingi nedir?
+
+select title, rating from film
+where film_id in (select film_id from film_actor
+where actor_id=(select actor_id from actor where first_name='Gene' and last_name='Willis'))
+
+
+36- Aktif customer sayisi nedir?
+
+select count(*) from customer
+where active=1
+
+37- 'C' harfiyle baslayan filmler hangileridir?
+
+select title from film
+where title like 'C%'
+
+38- 4$ den az odeme yapan musterilerin e-mail edresleri nedir?		------------------------------yapamadım
+
+select customer_id,sum(amount) from payment
+--where customer_id<4
+group by customer_id 
+order by customer_id
+
+
+39- Moscow'da ikamet eden staff ve customer tablosu? (sadece isim/soyisim sutunu olsun)		------------------------yapamadım
+
+select first_name,last_name from customer where address_id in (select address_id from address where district like 'Mos%')
+
+
+40- En az kiralanan 5 film hangisidir?
+
+select film_id, count(*) from inventory
+group by film_id
+order by count(*) desc limit 1;
+
+
+
+41- 2006 yilinda yayinlanan ingilizce filmler hangileridir?
+
+select * from film 
+where language_id=(select language_id from language where name='English')
+
+
+
+
+
+
